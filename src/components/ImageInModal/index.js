@@ -1,10 +1,9 @@
 import * as basicLightbox from 'basiclightbox';
 
-const ImageInModal = ({ largeImageURL }) => {
-  const instance = basicLightbox.create(
-    '<img src={largeImageURL} alt="cat" width="800" height="600" />'
-  );
-  instance.show();
+const ImageInModal = ({ url }) => {
+  basicLightbox
+    .create('<img src={url} alt="cat" width="800" height="600" />')
+    .show();
 };
 
 export default ImageInModal;

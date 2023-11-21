@@ -81,7 +81,7 @@ class App extends Component {
         {isLoading && <h1>Loading...</h1>}
         {images && <ImageGallery images={images} onClick={this.handleOpen} />}
         {isShowModal && (
-          <Modal close={this.handleClose}>
+          <Modal onClose={this.handleClose}>
             <ImageInModal url={largeImageURL} />
           </Modal>
         )}

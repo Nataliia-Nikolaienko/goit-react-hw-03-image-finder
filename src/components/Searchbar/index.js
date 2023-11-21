@@ -1,4 +1,5 @@
 import { Formik } from 'formik';
+// import { ReactSVG } from 'react-svg';
 import css from '../Searchbar/SearchBar.module.css';
 
 const FormikSearchBar = ({ submit }) => {
