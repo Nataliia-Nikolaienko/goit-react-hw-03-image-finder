@@ -2,20 +2,21 @@ import { Component } from 'react';
 import { getImagesWithSearch } from './api/images';
 import ImageGallery from './components/ImageGallery';
 import FormikSearchBar from './components/Searchbar';
-import ImageInModal from 'components/ImageInModal';
+// import ImageInModal from 'components/ImageInModal';
 import Modal from './components/Modal';
-// import Button from './components/Button';
+import Button from './components/Button';
 
 class App extends Component {
   state = {
+    images: [],
     query: '',
     page: 1,
     isLoading: false,
     url: '',
+    tags: '',
     isShowModal: false,
     error: '',
-    images: [],
-    // totalHits: 0,
+    total: 0,
   };
 
   componentDidUpdate(_, prevState) {
@@ -30,12 +31,14 @@ class App extends Component {
   handleSearch = async () => {
     try {
       this.setState({ isLoading: true });
-      const data = await getImagesWithSearch(this.state.query);
+      const { query, page } = this.state;
+      const data = await getImagesWithSearch(query, page);
       this.setState(({ images }) => {
         return {
           images: [...images, ...data.hits],
           error: '',
           isLoading: false,
+          total: data.totalHits,
         };
       });
     } catch (error) {
@@ -44,29 +47,42 @@ class App extends Component {
   };
 
   handleSubmit = ({ query }) => {
-    this.setState({ query });
-  };
-
-  handleOpen = url => {
-    this.setState(prev => ({ isShowModal: !prev.isShowModal, url }));
-  };
-
-  handleClose = e => {
-    if (e.code === 'Escape' || e.currentTarget === e.target) {
-      this.setState(prev => ({ isShowModal: !prev.isShowModal }));
+    if (query === this.state.query) {
+      return;
     }
+    this.setState({ query, images: [], page: 1 });
   };
 
-  // loadMore = () => {
-  //   this.steState(prev => ({
-  //     images: [...prev.images, ...hits],
-  //     loadMore: this.state.page < Math.ceil(totalHits / 12),
-  //   }));
-  // };
+  modalOpen = (largeImageURL, tags) => {
+    this.setState(prev => ({
+      isShowModal: !prev.isShowModal,
+      largeImageURL,
+      tags,
+    }));
+  };
+
+  closeModal = () => {
+    this.setState(prev => ({ isShowModal: !prev.isShowModal }));
+  };
+
+  loadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
 
   render() {
-    const { images, isLoading, error, isShowModal, largeImageURL } = this.state;
-
+    const {
+      images,
+      isLoading,
+      total,
+      error,
+      page,
+      largeImageURL,
+      tags,
+      isShowModal,
+    } = this.state;
+    const totalPage = Math.ceil(total / 12);
     return (
       <div
         style={{
@@ -79,13 +95,15 @@ class App extends Component {
         {error && <h1>{error}</h1>}
         <FormikSearchBar submit={this.handleSubmit} />
         {isLoading && <h1>Loading...</h1>}
-        {images && <ImageGallery images={images} onClick={this.handleOpen} />}
+        {<ImageGallery images={images} modalOpen={this.modalOpen} />}
         {isShowModal && (
-          <Modal onClose={this.handleClose}>
-            <ImageInModal url={largeImageURL} />
+          <Modal close={this.closeModal}>
+            <img url={largeImageURL} alt={tags} width="800" height="600" />
           </Modal>
         )}
-        {/* {images && <Button loading={this.loadMore} />} */}
+        {Boolean(images.length) && page < totalPage && (
+          <Button loading={this.loadMore} />
+        )}
       </div>
     );
   }

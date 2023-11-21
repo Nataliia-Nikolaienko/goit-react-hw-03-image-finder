@@ -1,17 +1,22 @@
+import React from 'react';
 import css from '../ImageGalleryItem/ImageGalleryItem.module.css';
 
-const ImageGalleryItem = ({ images, onClick }) => {
-  return images.map(({ id, webformatURL, largeImageURL }) => (
+const ImageGalleryItem = ({
+  id,
+  webformatURL,
+  largeImageURL,
+  tags,
+  modalOpen,
+}) => {
+  return (
     <li
       className={css.galleryItem}
       key={id}
-      onClick={() => {
-        onClick(largeImageURL);
-      }}
+      onClick={() => modalOpen({ largeImageURL, tags })}
     >
-      <img src={webformatURL} alt="cat" className={css.galleryImage} />
+      <img src={webformatURL} alt={tags} className={css.galleryImage} />
     </li>
-  ));
+  );
 };
 
 export default ImageGalleryItem;
