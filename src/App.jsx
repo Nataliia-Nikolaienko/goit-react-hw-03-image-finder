@@ -1,4 +1,4 @@
-import { Children, Component } from 'react';
+import { Component } from 'react';
 import { getImagesWithSearch } from './api/images';
 import ImageGallery from './components/ImageGallery';
 import FormikSearchBar from './components/Searchbar';
