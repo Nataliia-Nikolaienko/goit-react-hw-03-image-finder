@@ -1,10 +1,13 @@
 import { Component } from 'react';
+
 import { getImagesWithSearch } from './api/images';
+
 import ImageGallery from './components/ImageGallery';
 import FormikSearchBar from './components/Searchbar';
-// import ImageInModal from 'components/ImageInModal';
+import ImageInModal from 'components/ImageInModal';
 import Modal from './components/Modal';
 import Button from './components/Button';
+import Loader from './components/Loader';
 
 class App extends Component {
   state = {
@@ -12,11 +15,8 @@ class App extends Component {
     query: '',
     page: 1,
     isLoading: false,
-    url: '',
-    tags: '',
     isShowModal: false,
-    error: '',
-    total: 0,
+    largeImage: null,
   };
 
   componentDidUpdate(_, prevState) {
@@ -53,16 +53,21 @@ class App extends Component {
     this.setState({ query, images: [], page: 1 });
   };
 
-  modalOpen = (largeImageURL, tags) => {
-    this.setState(prev => ({
-      isShowModal: !prev.isShowModal,
-      largeImageURL,
-      tags,
-    }));
+  modalOpen = ({ largeImageURL, tags }) => {
+    this.setState({
+      largeImage: {
+        largeImageURL,
+        tags,
+      },
+      isShowModal: true,
+    });
   };
 
   closeModal = () => {
-    this.setState(prev => ({ isShowModal: !prev.isShowModal }));
+    this.setState(prev => ({
+      isShowModal: !prev.isShowModal,
+      largeImage: null,
+    }));
   };
 
   loadMore = () => {
@@ -78,11 +83,13 @@ class App extends Component {
       total,
       error,
       page,
-      largeImageURL,
-      tags,
+      largeImage,
+
       isShowModal,
     } = this.state;
+
     const totalPage = Math.ceil(total / 12);
+
     return (
       <div
         style={{
@@ -94,11 +101,11 @@ class App extends Component {
       >
         {error && <h1>{error}</h1>}
         <FormikSearchBar submit={this.handleSubmit} />
-        {isLoading && <h1>Loading...</h1>}
+        {isLoading && <Loader />}
         {<ImageGallery images={images} modalOpen={this.modalOpen} />}
         {isShowModal && (
           <Modal close={this.closeModal}>
-            <img url={largeImageURL} alt={tags} width="800" height="600" />
+            <ImageInModal {...largeImage} />
           </Modal>
         )}
         {Boolean(images.length) && page < totalPage && (

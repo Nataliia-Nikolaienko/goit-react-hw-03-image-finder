@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-// import { ReactSVG } from 'react-svg';
+import { FcSearch } from 'react-icons/fc';
 import css from '../Searchbar/SearchBar.module.css';
 
 const FormikSearchBar = ({ submit }) => {
@@ -15,6 +15,9 @@ const FormikSearchBar = ({ submit }) => {
                 disabled={formik.errors.title || formik.errors.description}
               >
                 <span className={css.searchButtonLabel}>Search</span>
+                <span>
+                  <FcSearch className={css.icon} />
+                </span>
               </button>
 
               <input
@@ -23,8 +26,8 @@ const FormikSearchBar = ({ submit }) => {
                 type="text"
                 value={formik.values.query}
                 onChange={formik.handleChange}
-                // autocomplete="off"
-                // autofocus
+                autoComplete="off"
+                autoFocus
                 placeholder="Search images and photos"
               />
             </form>
